@@ -18,6 +18,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+
+	"github.com/wintermi/bqdo/internal/config"
 )
 
 var (
@@ -32,10 +34,24 @@ var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "Run a pipeline of BigQuery SQL queries",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		cfg, err := config.Load(runConfigPath)
+		if err != nil {
+			return err
+		}
+
+		// Merge precedence: flags override config.
+		projectID := firstNonEmpty(runProjectID, cfg.ProjectID)
+		dataset := firstNonEmpty(runDataset, cfg.Dataset)
+		location := firstNonEmpty(runLocation, cfg.Location)
+
 		fmt.Printf("Running bqdo with config: %s\n", runConfigPath)
-		fmt.Printf("Project ID: %s\n", runProjectID)
-		fmt.Printf("Dataset: %s\n", runDataset)
-		fmt.Printf("Location: %s\n", runLocation)
+		fmt.Printf("Directory: %s\n", cfg.Directory)
+		fmt.Printf("Project ID: %s\n", projectID)
+		fmt.Printf("Dataset: %s\n", dataset)
+		fmt.Printf("Location: %s\n", location)
+		if len(cfg.Vars) > 0 {
+			fmt.Printf("Vars: %v\n", cfg.Vars)
+		}
 		if runDryRun {
 			fmt.Println("Dry run enabled: queries will be validated but not executed.")
 		}
@@ -43,9 +59,18 @@ var runCmd = &cobra.Command{
 	},
 }
 
+func firstNonEmpty(values ...string) string {
+	for _, v := range values {
+		if v != "" {
+			return v
+		}
+	}
+	return ""
+}
+
 func init() {
 	rootCmd.AddCommand(runCmd)
-	runCmd.Flags().StringVarP(&runConfigPath, "config", "c", "bqdo.yaml", "Path to the configuration file")
+	runCmd.Flags().StringVarP(&runConfigPath, "config", "c", "bqdo.toml", "Path to the configuration file")
 	runCmd.Flags().StringVarP(&runProjectID, "project", "p", "", "Google Cloud Project ID")
 	runCmd.Flags().StringVarP(&runDataset, "dataset", "d", "", "BigQuery Dataset")
 	runCmd.Flags().StringVarP(&runLocation, "location", "l", "", "BigQuery data processing location (e.g. australia-southeast1)")
