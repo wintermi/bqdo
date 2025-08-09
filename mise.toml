@@ -1,0 +1,68 @@
+# Copyright 2022-2025, Matthew Winter
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+[env]
+BUILD_DIR = "{{ cwd }}/build"
+VERSION = "{{ exec(command='git describe --tags --always --dirty') }}"
+COMMIT_HASH = "{{ exec(command='git rev-parse --short HEAD') }}"
+
+[tools]
+go = "1.24.6"
+"aqua:golangci/golangci-lint" = "2.3.1"
+"aqua:securego/gosec" = "2.22.7"
+"go:github.com/go-critic/go-critic/cmd/gocritic" = "latest"
+
+[tasks."setup"]
+description = "Setup the project"
+run = ["mise install", "go mod download", "go mod tidy"]
+sources = ["go.mod", "mise.toml", "*/**/*.go"]
+outputs = ["go.sum"]
+
+[tasks."clean"]
+description = "Clean the project"
+run = ["rm -rf {{ env.BUILD_DIR }}", "mkdir -p {{ env.BUILD_DIR }}"]
+
+[tasks."critic"]
+description = "Run Go Critic against the project"
+run = ["gocritic check -disable='#style' ./..."]
+sources = ["*/**/*.go"]
+
+[tasks."security"]
+description = "Run Go Sec against the project"
+run = ["gosec ./..."]
+sources = ["*/**/*.go"]
+
+[tasks."lint"]
+description = "Run Go Lint against the project"
+run = ["golangci-lint run --timeout=10m ./..."]
+sources = ["*/**/*.go"]
+
+[tasks."tests"]
+description = "Run the tests"
+depends = ["clean", "critic", "security", "lint"]
+run = [
+  "go test -v -timeout 30s -coverprofile='{{ env.BUILD_DIR }}/cover.out' -coverpkg=./... -cover ./...",
+  "go tool cover -func='{{ env.BUILD_DIR }}/cover.out'",
+]
+sources = ["*/**/*.go"]
+outputs = ["{{ env.BUILD_DIR }}/cover.out"]
+
+[tasks."build"]
+description = "Build the binary"
+depends = ["tests"]
+run = [
+  "CGO_ENABLED=0 go build -ldflags='-w -s -X github.com/wintermi/bqdo/internal/buildinfo.Version={{ env.VERSION }} -X github.com/wintermi/bqdo/internal/buildinfo.Commit={{ env.COMMIT_HASH }}' -o bin/bqdo ./cmd/bqdo",
+]
+sources = ["cmd/**/**/*.go", "internal/**/*.go", "go.mod", "go.sum"]
+outputs = ["bin/bqdo"]
