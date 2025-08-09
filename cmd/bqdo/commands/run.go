@@ -22,6 +22,10 @@ import (
 
 var (
 	runConfigPath string
+	runProjectID  string
+	runDataset    string
+	runLocation   string
+	runDryRun     bool
 )
 
 var runCmd = &cobra.Command{
@@ -29,6 +33,12 @@ var runCmd = &cobra.Command{
 	Short: "Run a pipeline of BigQuery SQL queries",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Printf("Running bqdo with config: %s\n", runConfigPath)
+		fmt.Printf("Project ID: %s\n", runProjectID)
+		fmt.Printf("Dataset: %s\n", runDataset)
+		fmt.Printf("Location: %s\n", runLocation)
+		if runDryRun {
+			fmt.Println("Dry run enabled: queries will be validated but not executed.")
+		}
 		return nil
 	},
 }
@@ -36,4 +46,8 @@ var runCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(runCmd)
 	runCmd.Flags().StringVarP(&runConfigPath, "config", "c", "bqdo.yaml", "Path to the configuration file")
+	runCmd.Flags().StringVarP(&runProjectID, "project", "p", "", "Google Cloud Project ID")
+	runCmd.Flags().StringVarP(&runDataset, "dataset", "d", "", "BigQuery Dataset")
+	runCmd.Flags().StringVarP(&runLocation, "location", "l", "", "BigQuery data processing location (e.g. australia-southeast1)")
+	runCmd.Flags().BoolVar(&runDryRun, "dry-run", false, "Dry run: validate and show actions without executing")
 }
