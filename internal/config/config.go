@@ -22,6 +22,9 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+// DefaultConfigFilename is the default file name searched/created for bqdo configuration.
+const DefaultConfigFilename = "bqdo.toml"
+
 // Config represents the TOML configuration for bqdo.
 //
 // Example TOML:

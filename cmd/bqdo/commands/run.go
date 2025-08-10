@@ -75,7 +75,7 @@ func firstNonEmpty(values ...string) string {
 
 func init() {
 	rootCmd.AddCommand(runCmd)
-	runCmd.Flags().StringVarP(&runConfigPath, "config", "c", "bqdo.toml", "Path to the configuration file")
+	runCmd.Flags().StringVarP(&runConfigPath, "config", "c", config.DefaultConfigFilename, "Path to the configuration file")
 	runCmd.Flags().StringVarP(&runProjectID, "project", "p", "", "Google Cloud Project ID")
 	runCmd.Flags().StringVarP(&runDataset, "dataset", "d", "", "BigQuery Dataset")
 	runCmd.Flags().StringVarP(&runLocation, "location", "l", "", "BigQuery data processing location (e.g. australia-southeast1)")
