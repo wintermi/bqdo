@@ -46,9 +46,10 @@ var (
 )
 
 var runCmd = &cobra.Command{
-	Use:   "run",
-	Short: "Run a pipeline of BigQuery SQL queries",
-	RunE:  runPipeline,
+	Use:          "run",
+	Short:        "Run a pipeline of BigQuery SQL queries",
+	RunE:         runPipeline,
+	SilenceUsage: true,
 }
 
 func runPipeline(cmd *cobra.Command, args []string) error {

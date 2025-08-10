@@ -27,9 +27,10 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "bqdo",
-	Short: "bqdo is a CLI for executing BigQuery SQL as part of a pipeline",
-	Long:  "bqdo is a CLI for executing BigQuery SQL as part of a pipeline.",
+	Use:          "bqdo",
+	Short:        "bqdo is a CLI for executing BigQuery SQL as part of a pipeline",
+	Long:         "bqdo is a CLI for executing BigQuery SQL as part of a pipeline.",
+	SilenceUsage: true,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		return nil
 	},

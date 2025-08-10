@@ -26,9 +26,10 @@ import (
 )
 
 var initCmd = &cobra.Command{
-	Use:   "init",
-	Short: "Initialize a bqdo pipeline in the current project",
-	RunE:  runInitCmd,
+	Use:          "init",
+	Short:        "Initialize a bqdo pipeline in the current project",
+	RunE:         runInitCmd,
+	SilenceUsage: true,
 }
 
 func init() {
