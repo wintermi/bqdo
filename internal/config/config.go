@@ -30,6 +30,7 @@ import (
 //	project_id = "my-project"
 //	dataset = "analytics"
 //	location = "US"
+//	impersonate_service_account = "runner@my-project.iam.gserviceaccount.com"
 //	[vars]
 //	start_date = "2025-01-01"
 //	env = "prod"
@@ -37,11 +38,12 @@ import (
 // All fields are optional and can be overridden via CLI flags.
 // Required validation is deferred to command execution.
 type Config struct {
-	Directory string            `toml:"directory"`
-	ProjectID string            `toml:"project_id"`
-	Dataset   string            `toml:"dataset"`
-	Location  string            `toml:"location"`
-	Vars      map[string]string `toml:"vars"`
+	Directory                 string            `toml:"directory"`
+	ProjectID                 string            `toml:"project_id"`
+	Dataset                   string            `toml:"dataset"`
+	Location                  string            `toml:"location"`
+	ImpersonateServiceAccount string            `toml:"impersonate_service_account"`
+	Vars                      map[string]string `toml:"vars"`
 }
 
 // Load reads and parses a TOML config file.

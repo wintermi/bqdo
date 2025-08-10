@@ -23,11 +23,12 @@ import (
 )
 
 var (
-	runConfigPath string
-	runProjectID  string
-	runDataset    string
-	runLocation   string
-	runDryRun     bool
+	runConfigPath                string
+	runProjectID                 string
+	runDataset                   string
+	runLocation                  string
+	runImpersonateServiceAccount string
+	runDryRun                    bool
 )
 
 var runCmd = &cobra.Command{
@@ -43,12 +44,16 @@ var runCmd = &cobra.Command{
 		projectID := firstNonEmpty(runProjectID, cfg.ProjectID)
 		dataset := firstNonEmpty(runDataset, cfg.Dataset)
 		location := firstNonEmpty(runLocation, cfg.Location)
+		impersonateServiceAccount := firstNonEmpty(runImpersonateServiceAccount, cfg.ImpersonateServiceAccount)
 
 		fmt.Printf("Running bqdo with config: %s\n", runConfigPath)
 		fmt.Printf("Directory: %s\n", cfg.Directory)
 		fmt.Printf("Project ID: %s\n", projectID)
 		fmt.Printf("Dataset: %s\n", dataset)
 		fmt.Printf("Location: %s\n", location)
+		if impersonateServiceAccount != "" {
+			fmt.Printf("Impersonate Service Account: %s\n", impersonateServiceAccount)
+		}
 		if len(cfg.Vars) > 0 {
 			fmt.Printf("Vars: %v\n", cfg.Vars)
 		}
@@ -74,5 +79,6 @@ func init() {
 	runCmd.Flags().StringVarP(&runProjectID, "project", "p", "", "Google Cloud Project ID")
 	runCmd.Flags().StringVarP(&runDataset, "dataset", "d", "", "BigQuery Dataset")
 	runCmd.Flags().StringVarP(&runLocation, "location", "l", "", "BigQuery data processing location (e.g. australia-southeast1)")
+	runCmd.Flags().StringVar(&runImpersonateServiceAccount, "impersonate-service-account", "", "Service account email to impersonate for Google Cloud API calls")
 	runCmd.Flags().BoolVar(&runDryRun, "dry-run", false, "Dry run: validate and show actions without executing")
 }
