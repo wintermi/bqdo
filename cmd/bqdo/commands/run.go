@@ -57,8 +57,18 @@ func runPipeline(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("config file %q not found: %w", runConfigPath, err)
 	}
 
+	// Resolve absolute config path and change working directory to its location
+	absConfigPath, err := filepath.Abs(runConfigPath)
+	if err != nil {
+		return fmt.Errorf("resolve config path: %w", err)
+	}
+	configDir := filepath.Dir(absConfigPath)
+	if chdirErr := os.Chdir(configDir); chdirErr != nil {
+		return fmt.Errorf("change working directory to %q: %w", configDir, chdirErr)
+	}
+
 	// Load configuration
-	cfg, err := config.Load(runConfigPath)
+	cfg, err := config.Load(absConfigPath)
 	if err != nil {
 		return err
 	}
@@ -81,7 +91,7 @@ func runPipeline(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("directory %q not found or is not a directory", directory)
 	}
 
-	fmt.Printf("Using config: %s\n", runConfigPath)
+	fmt.Printf("Using config: %s\n", absConfigPath)
 	fmt.Printf("Directory: %s\n", directory)
 	fmt.Printf("Project ID: %s\n", projectID)
 	if dataset != "" {

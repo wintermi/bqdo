@@ -8,6 +8,3 @@ impersonate_service_account = ""
 
 [vars]
 env = "dev"
-run_id = "example_{{ .env }}"
-start_date = "2025-01-01"
-
