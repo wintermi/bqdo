@@ -29,5 +29,3 @@ To validate without executing:
 ```sh
 bin/bqdo run -c examples/simple/bqdo.toml -p YOUR_PROJECT_ID -d bqdo_example -l US --dry-run
 ```
-
-

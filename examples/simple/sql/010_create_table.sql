@@ -2,7 +2,6 @@
 CREATE TABLE IF NOT EXISTS `{{ .project_id }}`.`{{ .dataset }}`.events (
   event_id STRING,
   event_ts TIMESTAMP,
-  env STRING
+  env STRING,
+  user STRING
 );
-
-
