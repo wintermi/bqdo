@@ -1,0 +1,33 @@
+# Examples
+
+This directory contains example BigQuery SQL pipeline projects that can be executed with `bqdo`.
+
+## simple
+
+Minimal pipeline demonstrating:
+- Reading `bqdo.toml`
+- Flag overrides
+- Template variables (`vars`)
+- Ordered execution of `.sql` files
+
+### Run
+
+Build the CLI (from repo root):
+
+```sh
+mise run build
+```
+
+Execute the example (replace placeholders):
+
+```sh
+bin/bqdo run \
+  -c examples/simple/bqdo.toml \
+  -p YOUR_GCP_PROJECT_ID \
+  -d bqdo_example \
+  -l US
+```
+
+You can pass `--dry-run` to validate without executing.
+
+
